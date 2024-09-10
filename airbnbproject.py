@@ -57,9 +57,7 @@ numeric_columns = [
 for column in numeric_columns:
     merged_df = merged_df.withColumn(column, F.col(column).cast("float"))
 
-
 # Cast columns to appropriate data types
-
 merged_df = merged_df.withColumn('Number of Reviews', col('Number of Reviews').cast(IntegerType()))
 merged_df = merged_df.withColumn('Review Scores Rating', col('Review Scores Rating').cast(IntegerType()))
 merged_df = merged_df.withColumn('Review Scores Accuracy', col('Review Scores Accuracy').cast(IntegerType()))
@@ -114,20 +112,10 @@ merged_df = fill_with_proxy(merged_df, 'Neighbourhood', 'Neighbourhood Group Cle
 merged_df = fill_with_proxy(merged_df, 'Host Neighbourhood', 'Host Location')
 merged_df = fill_with_proxy(merged_df, 'Host Location', 'Market')  # or 'State' as another option
 
-# Check null counts again to confirm changes
+# Check null counts to confirm changes
 null_counts = merged_df.select([sum(col(c).isNull().cast("int")).alias(c) for c in merged_df.columns])
 null_counts.show()
 
-# Define a regular expression pattern for valid two-letter country codes
-valid_country_code_pattern = "^[A-Z]{2}$"
-
-# Filter rows to keep only valid country codes
-valid_country_codes_df = merged_df.filter(col("Country Code").rlike(valid_country_code_pattern))
-
-# Show distinct valid country codes
-valid_country_codes_df.select("Country Code").distinct().show(truncate=False)
-
 # Repartition the DataFrame to a single partition (for saving to a single file)
-
 merged_df = merged_df.coalesce(1)
 merged_df.write.parquet('s3://airbnbproject-group4vita/raw/geojson/output/', mode='overwrite', compression='snappy')
