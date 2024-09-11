@@ -12,6 +12,9 @@ Parameters:
   SubnetId:
     Type: String
     Description: Subnet ID for EMR cluster
+  LogBucket:
+    Type: String
+    Description: S3 bucket for EMR logs
 
 Resources:
   MyEMRCluster:
