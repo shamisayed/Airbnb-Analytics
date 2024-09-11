@@ -29,7 +29,7 @@ jobs:
               InputFilePath1="s3://airbnbproject-group4vita/raw/geojson/airbnb-listings.csv" \
               InputFilePath2="s3://airbnbproject-group4vita/raw/geojson/airbnb-listings.geojson" \
               OutputFilePath="s3://airbnbproject-group4vita/raw/geojson/output/" \
-              SubnetId="subnet-037962d716f9fb49c"
+              SubnetId="${{ secrets.AWS_SUBNET_ID }}"
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
