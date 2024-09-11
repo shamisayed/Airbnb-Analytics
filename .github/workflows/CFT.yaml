@@ -14,7 +14,8 @@ Parameters:
     Description: Subnet ID for EMR cluster
   LogBucket:
     Type: String
-    Description: S3 bucket for EMR logs
+    Default: "airbnbproject-group4vita"
+    Description: "S3 bucket where EMR logs will be stored"
 
 Resources:
   MyEMRCluster:
