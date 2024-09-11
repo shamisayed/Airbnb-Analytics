@@ -36,6 +36,7 @@ Resources:
         Ec2KeyName: own
       JobFlowRole: EMR_EC2_DefaultRole
       ServiceRole: EMR_DefaultRole
+      LogUri: !Sub 's3://airbnbproject-group4vita/emr-logs/'
         
       BootstrapActions:
         - Name: "SetupEnvironment"
