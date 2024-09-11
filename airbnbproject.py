@@ -5,10 +5,6 @@ import pandas as pd
 from pyspark.sql.functions import to_date, col, trim, sum, when, round, regexp_replace
 from pyspark.sql.types import DoubleType, IntegerType, StringType, DateType, FloatType
 import pyspark.sql.functions as F
-import logging
-
-logging.basicConfig(filename='logs.log', level=logging.INFO, format='%(asctime)s:%(levelname)s:%(message)s')
-logging.info('Starting PySpark job')
 
 spark = SparkSession.builder \
     .appName("GeoPandas with PySpark") \
