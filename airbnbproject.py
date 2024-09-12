@@ -46,17 +46,7 @@ spark_gdf  = spark_gdf.dropDuplicates(['ID'])
 merged_df = projectdf.join(spark_gdf, on='ID', how='right')
 merged_df = merged_df.dropDuplicates(['ID'])
 
-numeric_columns = [
-    "Minimum Nights", "Maximum Nights", "Calculated host listings count", "Reviews per Month", "Price", "Weekly Price", "Monthly Price"
-]
-
-for column in numeric_columns:
-    merged_df = merged_df.withColumn(column, F.col(column).cast("float"))
-
-from pyspark.sql.types import IntegerType
-from pyspark.sql.functions import col
-
-# List of column names to be cast to IntegerType
+# Use a loop to cast columns to IntegerType or Float
 integer_columns = [
     'Number of Reviews',
     'Review Scores Rating',
@@ -79,10 +69,14 @@ integer_columns = [
     'Bedrooms',
     'Calculated host listings count'
 ]
-
-# Use a loop to cast all columns to IntegerType
 for column in integer_columns:
     merged_df = merged_df.withColumn(column, col(column).cast(IntegerType()))
+
+numeric_columns = [
+    "Minimum Nights", "Maximum Nights", "Calculated host listings count", "Reviews per Month", "Price", "Weekly Price", "Monthly Price"
+]
+for column in numeric_columns:
+    merged_df = merged_df.withColumn(column, F.col(column).cast("float"))
 
 #Remove '%' and convert to integer
 merged_df = merged_df.withColumn(
@@ -108,6 +102,12 @@ merged_df = merged_df.withColumn("Calendar last Scraped", to_date(col("Calendar 
 # Fill column using a proxy column
 def fill_with_proxy(df, primary_col, proxy_col):
     return df.withColumn(primary_col, when(col(primary_col).isNull(), col(proxy_col)).otherwise(col(primary_col)))
+
+merged_df = fill_with_proxy(merged_df, 'Market', 'City')
+merged_df = fill_with_proxy(merged_df, 'Country Code', 'Country')
+merged_df = fill_with_proxy(merged_df, 'Neighbourhood', 'Neighbourhood Group Cleansed')
+merged_df = fill_with_proxy(merged_df, 'Host Neighbourhood', 'Host Location')
+merged_df = fill_with_proxy(merged_df, 'Host Location', 'Market')
 
 # Repartition the DataFrame to a single partition (for saving to a single file)
 merged_df = merged_df.coalesce(1)
