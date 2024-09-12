@@ -8,6 +8,7 @@ import pyspark.sql.functions as F
 
 spark = SparkSession.builder \
     .appName("GeoPandas with PySpark") \
+    .config("spark.sql.execution.arrow.pyspark.enabled", "true") \
     .getOrCreate()
 
 df = spark.read.csv("s3://airbnbproject-group4vita/raw/geojson/airbnb-listings.csv", sep=";", header=True, inferSchema=True)
@@ -111,4 +112,4 @@ merged_df = fill_with_proxy(merged_df, 'Host Location', 'Market')
 
 # Repartition the DataFrame to a single partition (for saving to a single file)
 merged_df = merged_df.coalesce(1)
-merged_df.write.parquet('s3://airbnbproject-group4vita/raw/geojson/output/', mode='overwrite', compression='snappy')
+merged_df.write.parquet('s3://airbnbproject-group4vita/raw/geojson/output-table/', mode='overwrite', compression='snappy')
