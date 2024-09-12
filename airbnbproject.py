@@ -40,9 +40,9 @@ gdf['geometry'] = gdf['geometry'].apply(lambda x: x.wkt if x is not None else No
 spark_gdf = spark.createDataFrame(gdf)
 spark_gdf = spark_gdf.withColumn("latitude", col("latitude").cast("double"))
 spark_gdf = spark_gdf.withColumn("longitude", col("longitude").cast("double"))
-spark_gdf  = spark_gdf.dropna(subset=['ID'])
-spark_gdf  = spark_gdf .withColumn("ID", trim(col("ID").cast("string")))
-spark_gdf  = spark_gdf.dropDuplicates(['ID'])
+spark_gdf = spark_gdf.dropna(subset=['ID'])
+spark_gdf = spark_gdf.withColumn("ID", trim(col("ID").cast("string")))
+spark_gdf = spark_gdf.dropDuplicates(['ID'])
 
 merged_df = projectdf.join(spark_gdf, on='ID', how='right')
 merged_df = merged_df.dropDuplicates(['ID'])
