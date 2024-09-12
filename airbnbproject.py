@@ -101,4 +101,4 @@ merged_df = merged_df.withColumn("Calendar last Scraped", to_date(col("Calendar 
 
 # Repartition the DataFrame to a single partition (for saving to a single file)
 merged_df = merged_df.coalesce(1)
-merged_df.write.parquet('s3://airbnbproject-group4vita/raw/geojson/output-table/', mode='overwrite', compression='snappy')
+merged_df.write.parquet('s3://airbnbprojectdata/output-table/', mode='overwrite', compression='snappy')
