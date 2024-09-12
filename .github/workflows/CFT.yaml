@@ -1,0 +1,89 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Parameters:
+  InputFilePath1:
+    Type: String
+    Description: The S3 location of the CSV file
+  InputFilePath2:
+    Type: String
+    Description: The S3 location of the Geojson file
+  OutputFilePath:
+    Type: String
+    Description: The S3 location where the processed Parquet file will be written
+  SubnetId:
+    Type: String
+    Description: Subnet ID for EMR cluster
+  LogBucket:
+    Type: String
+    Description: S3 bucket for EMR logs
+    Default: "airbnbprojectdata"
+
+Resources:
+  MyEMRCluster:
+    Type: AWS::EMR::Cluster
+    Properties:
+      Name: MyEMRCluster
+      ReleaseLabel: emr-7.2.0
+      Applications:
+        - Name: Hadoop
+        - Name: Spark
+      Instances:
+        MasterInstanceGroup:
+          InstanceCount: 1
+          InstanceType: m5.xlarge
+          Name: MASTER
+        CoreInstanceGroup:
+          InstanceCount: 2
+          InstanceType: m5.xlarge
+          Name: CORE
+        Ec2SubnetIds:
+          - !Ref SubnetId
+        Ec2KeyName: passkey
+      JobFlowRole: EMR_EC2_DefaultRole
+      ServiceRole: EMR_DefaultRole
+      LogUri: !Sub 's3://airbnbprojectdata/emr-logs/'
+
+        
+      BootstrapActions:
+        - Name: "SetupEnvironment"
+          ScriptBootstrapAction:
+            Path: "s3://airbnbprojectdata/bootstrap.sh"
+
+  MySparkStep:
+    Type: AWS::EMR::Step
+    Properties:
+      Name: PySparkJob
+      ActionOnFailure: CONTINUE
+      HadoopJarStep:
+        Jar: command-runner.jar
+        Args:
+          - spark-submit
+          - --deploy-mode
+          - cluster
+          - s3://airbnbprojectdata/airbnbproject.py
+          - !Ref InputFilePath1
+          - !Ref InputFilePath2
+          - !Ref OutputFilePath
+      JobFlowId: !Ref MyEMRCluster
+
+  MyEMRCrawler:
+    Type: AWS::Glue::Crawler
+    Properties:
+      Name: MyEMRCrawler
+      Role: LabRole
+      DatabaseName: MyGlueDatabase
+      Targets:
+        S3Targets:
+          - Path: !Ref OutputFilePath
+
+  MyEMRCrawlerTrigger:
+    Type: AWS::Glue::Trigger
+    Properties:
+      Name: MyEMRCrawlerTrigger
+      Type: ON_DEMAND
+      Actions:
+        - CrawlerName: !Ref MyEMRCrawler
+
+Outputs:
+  AthenaTable:
+    Description: "The Athena table created by the Glue Crawler"
+    Value: !Ref MyEMRCrawler
