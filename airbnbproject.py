@@ -1,4 +1,4 @@
-from pyspark.sql import SparkSession
+from pyspark.sql import SparkSession 
 
 import geopandas as gpd
 import pandas as pd
