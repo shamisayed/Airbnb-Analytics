@@ -100,16 +100,6 @@ merged_df = merged_df.withColumn("Last Scraped", to_date(col("Last Scraped"), "y
 merged_df = merged_df.withColumn("Host Since", to_date(col("Host Since"), "yyyy-MM-dd"))
 merged_df = merged_df.withColumn("Calendar last Scraped", to_date(col("Calendar last Scraped"), "yyyy-MM-dd"))
 
-# Fill column using a proxy column
-def fill_with_proxy(df, primary_col, proxy_col):
-    return df.withColumn(primary_col, when(col(primary_col).isNull(), col(proxy_col)).otherwise(col(primary_col)))
-
-merged_df = fill_with_proxy(merged_df, 'Market', 'City')
-merged_df = fill_with_proxy(merged_df, 'Country Code', 'Country')
-merged_df = fill_with_proxy(merged_df, 'Neighbourhood', 'Neighbourhood Group Cleansed')
-merged_df = fill_with_proxy(merged_df, 'Host Neighbourhood', 'Host Location')
-merged_df = fill_with_proxy(merged_df, 'Host Location', 'Market')
-
 # Repartition the DataFrame to a single partition (for saving to a single file)
 merged_df = merged_df.coalesce(1)
 merged_df.write.parquet('s3://airbnbproject-group4vita/raw/geojson/output-table/', mode='overwrite', compression='snappy')
