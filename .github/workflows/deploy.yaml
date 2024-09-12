@@ -22,7 +22,7 @@ jobs:
       - name: Deploy CloudFormation stack
         run: |
           aws cloudformation deploy \
-            --stack-name my-stack-name \
+            --stack-name stack1 \
             --template-file .github/workflows/CFT.yaml \
             --capabilities CAPABILITY_IAM \
             --parameter-overrides \
@@ -30,6 +30,7 @@ jobs:
               InputFilePath2="s3://airbnbprojectdata/airbnb-listings.geojson" \
               OutputFilePath="s3://airbnbprojectdata/output-table/" \
               SubnetId="${{ secrets.AWS_SUBNET_ID }}"
+              LogBucket="airbnbprojectdata"
 
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
