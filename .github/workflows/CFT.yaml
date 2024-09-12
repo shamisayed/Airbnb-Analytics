@@ -12,10 +12,6 @@ Parameters:
   SubnetId:
     Type: String
     Description: Subnet ID for EMR cluster
-  LogBucket:
-    Type: String
-    Description: S3 bucket for EMR logs
-    Default: "airbnbprojectdata"
 
 Resources:
   MyEMRCluster:
@@ -40,7 +36,6 @@ Resources:
         Ec2KeyName: vockey
       JobFlowRole: EMR_EC2_DefaultRole
       ServiceRole: EMR_DefaultRole
-      LogUri: !Sub 's3://airbnbprojectdata/emr-logs/'
         
       BootstrapActions:
         - Name: "SetupEnvironment"
