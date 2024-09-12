@@ -53,27 +53,36 @@ numeric_columns = [
 for column in numeric_columns:
     merged_df = merged_df.withColumn(column, F.col(column).cast("float"))
 
-# Cast columns to appropriate data types
-merged_df = merged_df.withColumn('Number of Reviews', col('Number of Reviews').cast(IntegerType()))
-merged_df = merged_df.withColumn('Review Scores Rating', col('Review Scores Rating').cast(IntegerType()))
-merged_df = merged_df.withColumn('Review Scores Accuracy', col('Review Scores Accuracy').cast(IntegerType()))
-merged_df = merged_df.withColumn('Review Scores Cleanliness', col('Review Scores Cleanliness').cast(IntegerType()))
-merged_df = merged_df.withColumn('Review Scores Checkin', col('Review Scores Checkin').cast(IntegerType()))
-merged_df = merged_df.withColumn('Review Scores Communication', col('Review Scores Communication').cast(IntegerType()))
-merged_df = merged_df.withColumn('Review Scores Location', col('Review Scores Location').cast(IntegerType()))
-merged_df = merged_df.withColumn('Review Scores Value', col('Review Scores Value').cast(IntegerType()))
-merged_df = merged_df.withColumn('Availability 30', col('Availability 30').cast(IntegerType()))
-merged_df = merged_df.withColumn('Availability 60', col('Availability 60').cast(IntegerType()))
-merged_df = merged_df.withColumn('Availability 90', col('Availability 90').cast(IntegerType()))
-merged_df = merged_df.withColumn('Availability 365', col('Availability 365').cast(IntegerType()))
-merged_df = merged_df.withColumn('Minimum Nights', col('Minimum Nights').cast(IntegerType()))
-merged_df = merged_df.withColumn('Maximum Nights', col('Maximum Nights').cast(IntegerType()))
-merged_df = merged_df.withColumn('Host Listings Count', col('Host Listings Count').cast(IntegerType()))
-merged_df = merged_df.withColumn('Host Total Listings Count', col('Host Total Listings Count').cast(IntegerType()))
-merged_df = merged_df.withColumn('Accommodates', col('Accommodates').cast(IntegerType()))
-merged_df= merged_df.withColumn('Bathrooms', col('Bathrooms').cast(IntegerType()))
-merged_df = merged_df.withColumn('Bedrooms', col('Bedrooms').cast(IntegerType()))
-merged_df = merged_df.withColumn('Calculated host listings count', col('Calculated host listings count').cast(IntegerType()))
+from pyspark.sql.types import IntegerType
+from pyspark.sql.functions import col
+
+# List of column names to be cast to IntegerType
+integer_columns = [
+    'Number of Reviews',
+    'Review Scores Rating',
+    'Review Scores Accuracy',
+    'Review Scores Cleanliness',
+    'Review Scores Checkin',
+    'Review Scores Communication',
+    'Review Scores Location',
+    'Review Scores Value',
+    'Availability 30',
+    'Availability 60',
+    'Availability 90',
+    'Availability 365',
+    'Minimum Nights',
+    'Maximum Nights',
+    'Host Listings Count',
+    'Host Total Listings Count',
+    'Accommodates',
+    'Bathrooms',
+    'Bedrooms',
+    'Calculated host listings count'
+]
+
+# Use a loop to cast all columns to IntegerType
+for column in integer_columns:
+    merged_df = merged_df.withColumn(column, col(column).cast(IntegerType()))
 
 #Remove '%' and convert to integer
 merged_df = merged_df.withColumn(
@@ -106,11 +115,7 @@ merged_df = fill_with_proxy(merged_df, 'Market', 'City')
 merged_df = fill_with_proxy(merged_df, 'Country Code', 'Country')
 merged_df = fill_with_proxy(merged_df, 'Neighbourhood', 'Neighbourhood Group Cleansed')
 merged_df = fill_with_proxy(merged_df, 'Host Neighbourhood', 'Host Location')
-merged_df = fill_with_proxy(merged_df, 'Host Location', 'Market')  # or 'State' as another option
-
-# Check null counts to confirm changes
-null_counts = merged_df.select([sum(col(c).isNull().cast("int")).alias(c) for c in merged_df.columns])
-null_counts.show()
+merged_df = fill_with_proxy(merged_df, 'Host Location', 'Market')  
 
 # Repartition the DataFrame to a single partition (for saving to a single file)
 merged_df = merged_df.coalesce(1)
