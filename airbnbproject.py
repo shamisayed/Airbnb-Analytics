@@ -8,9 +8,10 @@ import pyspark.sql.functions as F
 
 spark = SparkSession.builder \
     .appName("GeoPandas with PySpark") \
+    .config("spark.sql.execution.arrow.pyspark.enabled", "true") \
     .getOrCreate()
 
-df = spark.read.csv("s3://airbnbproject-group4vita/raw/geojson/airbnb-listings.csv", sep=";", header=True, inferSchema=True)
+df = spark.read.csv("s3://airbnbprojectdata/airbnb-listings.csv", sep=";", header=True, inferSchema=True)
 
 columns_to_drop = [
     "Listing Url", "Scrape ID", "Host URL", "Thumbnail Url", "Medium Url",
@@ -29,7 +30,7 @@ projectdf  = projectdf .withColumn("ID", trim(col("ID").cast("string")))
 projectdf = projectdf.dropna(subset=['ID'])
 projectdf = projectdf.select(original_columns)
 
-gdf = gpd.read_file("s3://airbnbproject-group4vita/raw/geojson/airbnb-listings.geojson")
+gdf = gpd.read_file("s3://airbnbprojectdata/airbnb-listings.geojson")
 gdf.rename(columns={'id': 'ID'}, inplace=True)
 columns_to_keep = ['latitude', 'longitude', 'ID', 'geometry']
 gdf = gdf[columns_to_keep]
@@ -46,7 +47,7 @@ spark_gdf  = spark_gdf.dropDuplicates(['ID'])
 merged_df = projectdf.join(spark_gdf, on='ID', how='right')
 merged_df = merged_df.dropDuplicates(['ID'])
 
-# Use a loop to cast columns to IntegerType or Float
+# Use a loop to cast columns to interger or float
 integer_columns = [
     'Number of Reviews',
     'Review Scores Rating',
@@ -70,7 +71,7 @@ integer_columns = [
     'Calculated host listings count'
 ]
 for column in integer_columns:
-    merged_df = merged_df.withColumn(column, col(column).cast(IntegerType()))
+    merged_df = merged_df.withColumn(column, F.col(column).cast("integer"))
 
 numeric_columns = [
     "Minimum Nights", "Maximum Nights", "Calculated host listings count", "Reviews per Month", "Price", "Weekly Price", "Monthly Price"
@@ -98,6 +99,17 @@ merged_df = merged_df.withColumn(
 merged_df = merged_df.withColumn("Last Scraped", to_date(col("Last Scraped"), "yyyy-MM-dd"))
 merged_df = merged_df.withColumn("Host Since", to_date(col("Host Since"), "yyyy-MM-dd"))
 merged_df = merged_df.withColumn("Calendar last Scraped", to_date(col("Calendar last Scraped"), "yyyy-MM-dd"))
+
+# Fill column using a proxy column
+def fill_with_proxy(df, primary_col, proxy_col):
+    return df.withColumn(primary_col, when(col(primary_col).isNull(), col(proxy_col)).otherwise(col(primary_col)))
+
+# Applying the proxy method
+merged_df = fill_with_proxy(merged_df, 'Market', 'City')
+merged_df = fill_with_proxy(merged_df, 'Country Code', 'Country')
+merged_df = fill_with_proxy(merged_df, 'Neighbourhood', 'Neighbourhood Group Cleansed')
+merged_df = fill_with_proxy(merged_df, 'Host Neighbourhood', 'Host Location')
+merged_df = fill_with_proxy(merged_df, 'Host Location', 'Market')
 
 # Repartition the DataFrame to a single partition (for saving to a single file)
 merged_df = merged_df.coalesce(1)
