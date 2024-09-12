@@ -9,6 +9,9 @@ Parameters:
   OutputFilePath:
     Type: String
     Description: The S3 location where the processed Parquet file will be written
+  SubnetId:
+    Type: String
+    Description: Subnet ID for EMR cluster
   LogBucket:
     Type: String
     Description: S3 bucket for EMR logs
@@ -35,6 +38,8 @@ Resources:
         Ec2KeyName: passkey
       JobFlowRole: EMR_EC2_DefaultRole
       ServiceRole: EMR_DefaultRole
+      Ec2SubnetIds:
+          - !Ref SubnetId
       LogUri: !Sub 's3://airbnbprojectdata/emr-logs/'
 
         
