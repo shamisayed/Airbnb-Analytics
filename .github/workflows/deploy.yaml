@@ -29,6 +29,7 @@ jobs:
               InputFilePath1="s3://airbnbprojectdata/airbnb-listings.csv" \
               InputFilePath2="s3://airbnbprojectdata/airbnb-listings.geojson" \
               OutputFilePath="s3://airbnbprojectdata/output-table/" \
+              SubnetId="${{ secrets.AWS_SUBNET_ID }}" \
               LogBucket="airbnbprojectdata"
 
         env:
