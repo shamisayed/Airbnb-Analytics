@@ -33,7 +33,7 @@ Resources:
           Name: CORE
         Ec2SubnetIds:
           - !Ref SubnetId
-        Ec2KeyName: vockey
+        Ec2KeyName: passkey
       JobFlowRole: EMR_EC2_DefaultRole
       ServiceRole: EMR_DefaultRole
         
