@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09" 
-Parameters:
+Parameters: 
   InputFilePath1:
     Type: String
     Description: The S3 location of the CSV file
