@@ -15,7 +15,7 @@ Parameters:
   LogBucket:
     Type: String
     Description: S3 bucket for EMR logs
-    Default: "airbnbproject-group4vita"
+    Default: "airbnbprojectdata"
 
 Resources:
   MyEMRCluster:
@@ -40,12 +40,12 @@ Resources:
         Ec2KeyName: own
       JobFlowRole: EMR_EC2_DefaultRole
       ServiceRole: EMR_DefaultRole
-      LogUri: !Sub 's3://airbnbproject-group4vita/emr-logs/'
+      LogUri: !Sub 's3://airbnbprojectdata/emr-logs/'
         
       BootstrapActions:
         - Name: "SetupEnvironment"
           ScriptBootstrapAction:
-            Path: "s3://airbnbproject-group4vita/bootstrap.sh"
+            Path: "s3://airbnbprojectdata/bootstrap.sh"
 
   MySparkStep:
     Type: AWS::EMR::Step
@@ -58,7 +58,7 @@ Resources:
           - spark-submit
           - --deploy-mode
           - cluster
-          - s3://airbnbproject-group4vita/airbnbproject.py
+          - s3://airbnbprojectdata/airbnbproject.py
           - !Ref InputFilePath1
           - !Ref InputFilePath2
           - !Ref OutputFilePath
