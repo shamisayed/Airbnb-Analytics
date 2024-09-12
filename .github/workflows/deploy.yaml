@@ -28,8 +28,9 @@ jobs:
             --parameter-overrides \
               InputFilePath1="s3://airbnbproject-group4vita/raw/geojson/airbnb-listings.csv" \
               InputFilePath2="s3://airbnbproject-group4vita/raw/geojson/airbnb-listings.geojson" \
-              OutputFilePath="s3://airbnbproject-group4vita/raw/geojson/output/" \
+              OutputFilePath="s3://airbnbproject-group4vita/raw/geojson/output-table/" \
               SubnetId="${{ secrets.AWS_SUBNET_ID }}"
+              LogBucket="airbnbproject-group4vita"
 
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
