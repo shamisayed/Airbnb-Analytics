@@ -8,7 +8,6 @@ import pyspark.sql.functions as F
 
 spark = SparkSession.builder \
     .appName("GeoPandas with PySpark") \
-    .config("spark.sql.execution.arrow.pyspark.enabled", "true") \
     .getOrCreate()
 
 df = spark.read.csv("s3://airbnbproject-group4vita/raw/geojson/airbnb-listings.csv", sep=";", header=True, inferSchema=True)
