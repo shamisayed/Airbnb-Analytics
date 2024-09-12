@@ -12,6 +12,10 @@ Parameters:
   SubnetId:
     Type: String
     Description: Subnet ID for EMR cluster
+  LogBucket:
+    Type: String
+    Description: S3 bucket for EMR logs
+    Default: "airbnbproject-group4vita"
 
 Resources:
   MyEMRCluster:
@@ -36,6 +40,7 @@ Resources:
         Ec2KeyName: own
       JobFlowRole: EMR_EC2_DefaultRole
       ServiceRole: EMR_DefaultRole
+      LogUri: !Sub 's3://airbnbproject-group4vita/emr-logs/'
         
       BootstrapActions:
         - Name: "SetupEnvironment"
@@ -45,7 +50,7 @@ Resources:
   MySparkStep:
     Type: AWS::EMR::Step
     Properties:
-      Name: ProcessTwoFilesWithPySpark
+      Name: PySparkJob
       ActionOnFailure: CONTINUE
       HadoopJarStep:
         Jar: command-runner.jar
