@@ -22,7 +22,7 @@ jobs:
       - name: Deploy CloudFormation stack
         run: |
           aws cloudformation deploy \
-            --stack-name my-stack-10 \
+            --stack-name my-stack-name \
             --template-file .github/workflows/cloudformation.yaml \
             --capabilities CAPABILITY_IAM \
             --parameter-overrides \
