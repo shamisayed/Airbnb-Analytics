@@ -47,18 +47,6 @@ spark_gdf = spark_gdf.dropDuplicates(['ID'])
 merged_df = projectdf.join(spark_gdf, on='ID', how='right')
 merged_df = merged_df.dropDuplicates(['ID'])
 
-superhost_criteria = (
-    (col('Host Response Rate') > 90) & 
-    (col('Host Acceptance Rate') > 90) &
-    (col('Review Scores Rating') >= 96) &
-    (col('Number of Reviews') >= 10) &
-    (col('Cancellation Policy') != 'strict')
-)
-
-merged_df = merged_df.withColumn(
-    'superhost',
-    when(superhost_criteria, "Yes").otherwise("No")
-
 # Use a loop to cast columns to interger or float
 integer_columns = [
     'Number of Reviews',
@@ -111,6 +99,10 @@ merged_df = merged_df.withColumn(
 merged_df = merged_df.withColumn("Last Scraped", to_date(col("Last Scraped"), "yyyy-MM-dd"))
 merged_df = merged_df.withColumn("Host Since", to_date(col("Host Since"), "yyyy-MM-dd"))
 merged_df = merged_df.withColumn("Calendar last Scraped", to_date(col("Calendar last Scraped"), "yyyy-MM-dd"))
+
+superhost_criteria = ((col('Host Response Rate') > 90) & (col('Host Acceptance Rate') > 90) & (col('Review Scores Rating') >= 96) & (col('Number of Reviews') >= 10) & (col('Cancellation Policy') != 'strict'))
+
+merged_df = merged_df.withColumn('superhost',when(superhost_criteria, "Yes").otherwise("No")
 
 # Repartition the DataFrame to a single partition (for saving to a single file)
 merged_df = merged_df.coalesce(1)
