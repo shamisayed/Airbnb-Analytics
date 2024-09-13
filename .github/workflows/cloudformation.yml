@@ -24,6 +24,7 @@ Resources:
       Name: MyEMRCluster
       ReleaseLabel: emr-7.2.0
       Applications:
+        - Name: Hadoop
         - Name: Spark
       Instances:
         MasterInstanceGroup:
@@ -31,7 +32,7 @@ Resources:
           InstanceType: m5.xlarge
           Name: MASTER
         CoreInstanceGroup:
-          InstanceCount: 2
+          InstanceCount: 1
           InstanceType: m5.xlarge
           Name: CORE
         Ec2SubnetIds:
@@ -39,14 +40,17 @@ Resources:
         Ec2KeyName: own
       JobFlowRole: EMR_EC2_DefaultRole
       ServiceRole: EMR_DefaultRole
-      Ec2SubnetIds:
-          - !Ref SubnetId
       LogUri: !Sub 's3://airbnbprojectdata/emr-logs/'
+        
+      BootstrapActions:
+        - Name: "SetupEnvironment"
+          ScriptBootstrapAction:
+            Path: "s3://airbnbprojectdata/bootstrap.sh"
 
   MySparkStep:
     Type: AWS::EMR::Step
     Properties:
-      Name: PySpark_Job
+      Name: MySparkStep
       ActionOnFailure: CONTINUE
       HadoopJarStep:
         Jar: command-runner.jar
@@ -54,10 +58,10 @@ Resources:
           - spark-submit
           - --deploy-mode
           - cluster
+          - s3://airbnbprojectdata/airbnbproject.py
           - !Ref InputFilePath1
           - !Ref InputFilePath2
           - !Ref OutputFilePath
-          - s3://airbnbproject-group4vita/airbnbproject.py
       JobFlowId: !Ref MyEMRCluster
 
   MyEMRCrawler:
