@@ -1,8 +1,8 @@
-# name: combine
-# on:
-#   push:
-#     branches: [ main ]
-#   workflow_dispatch:
+name: combine
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   build:
