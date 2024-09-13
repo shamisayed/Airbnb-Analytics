@@ -52,7 +52,7 @@ superhost_criteria = (
     (col('Host Acceptance Rate') > 90) &
     (col('Review Scores Rating') >= 96) &
     (col('Number of Reviews') >= 10) &
-    (col('Cancellation Policy') != 'strict')  # Example condition to exclude strict policies
+    (col('Cancellation Policy') != 'strict')
 )
 
 merged_df = merged_df.withColumn(
