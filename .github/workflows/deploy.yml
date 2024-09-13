@@ -23,7 +23,7 @@ jobs:
         run: |
           aws cloudformation deploy \
             --stack-name mystack \
-            --template-file .github/workflows/cloudformation-template.yml \
+            --template-file .github/workflows/cloudformation.yml \
             --capabilities CAPABILITY_IAM \
             --parameter-overrides \
               InputFilePath1="s3://airbnbprojectdata/airbnb-listings.csv" \
