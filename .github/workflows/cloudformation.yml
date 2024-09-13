@@ -1,11 +1,11 @@
-AWSTemplateFormatVersion: "2010-09-09" 
-Parameters: 
+AWSTemplateFormatVersion: "2010-09-09"
+Parameters:
   InputFilePath1:
     Type: String
-    Description: The S3 location of the CSV file
+    Description: The S3 location of the first input file
   InputFilePath2:
     Type: String
-    Description: The S3 location of the Geojson file
+    Description: The S3 location of the second input file
   OutputFilePath:
     Type: String
     Description: The S3 location where the processed Parquet file will be written
@@ -24,7 +24,6 @@ Resources:
       Name: MyEMRCluster
       ReleaseLabel: emr-7.2.0
       Applications:
-        - Name: Hadoop
         - Name: Spark
       Instances:
         MasterInstanceGroup:
@@ -35,23 +34,19 @@ Resources:
           InstanceCount: 2
           InstanceType: m5.xlarge
           Name: CORE
-        Ec2KeyName: passkey
+        Ec2SubnetIds:
+          - !Ref SubnetId
+        Ec2KeyName: own
       JobFlowRole: EMR_EC2_DefaultRole
       ServiceRole: EMR_DefaultRole
       Ec2SubnetIds:
           - !Ref SubnetId
       LogUri: !Sub 's3://airbnbprojectdata/emr-logs/'
 
-        
-      BootstrapActions:
-        - Name: "SetupEnvironment"
-          ScriptBootstrapAction:
-            Path: "s3://airbnbprojectdata/bootstrap.sh"
-
   MySparkStep:
     Type: AWS::EMR::Step
     Properties:
-      Name: PySparkJob
+      Name: PySpark_Job
       ActionOnFailure: CONTINUE
       HadoopJarStep:
         Jar: command-runner.jar
@@ -59,10 +54,10 @@ Resources:
           - spark-submit
           - --deploy-mode
           - cluster
-          - s3://airbnbprojectdata/airbnbproject.py
           - !Ref InputFilePath1
           - !Ref InputFilePath2
           - !Ref OutputFilePath
+          - s3://airbnbproject-group4vita/airbnbproject.py
       JobFlowId: !Ref MyEMRCluster
 
   MyEMRCrawler:
