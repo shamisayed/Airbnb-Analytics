@@ -47,6 +47,18 @@ spark_gdf = spark_gdf.dropDuplicates(['ID'])
 merged_df = projectdf.join(spark_gdf, on='ID', how='right')
 merged_df = merged_df.dropDuplicates(['ID'])
 
+superhost_criteria = (
+    (col('Host Response Rate') > 90) & 
+    (col('Host Acceptance Rate') > 90) &
+    (col('Review Scores Rating') >= 96) &
+    (col('Number of Reviews') >= 10) &
+    (col('Cancellation Policy') != 'strict')  # Example condition to exclude strict policies
+)
+
+merged_df = merged_df.withColumn(
+    'superhost',
+    when(superhost_criteria, "Yes").otherwise("No")
+
 # Use a loop to cast columns to interger or float
 integer_columns = [
     'Number of Reviews',
