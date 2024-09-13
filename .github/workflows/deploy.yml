@@ -1,8 +1,8 @@
-name: combine
-on:
-  push:
-    branches: [ main ]
-  workflow_dispatch:
+# name: workflow
+# on:
+#   push:
+#     branches: [ main ]
+#   workflow_dispatch:
 
 jobs:
   build:
@@ -22,13 +22,13 @@ jobs:
       - name: Deploy CloudFormation stack
         run: |
           aws cloudformation deploy \
-            --stack-name my-stack-name \
-            --template-file .github/workflows/cloudformation.yml \
+            --stack-name mystack \
+            --template-file .github/workflows/cloudformation-template.yml \
             --capabilities CAPABILITY_IAM \
             --parameter-overrides \
               InputFilePath1="s3://airbnbprojectdata/airbnb-listings.csv" \
               InputFilePath2="s3://airbnbprojectdata/airbnb-listings.geojson" \
-              OutputFilePath="s3://airbnbproject/output/" \
+              OutputFilePath="s3://airbnbprojectdata/output/" \
               SubnetId="${{ secrets.AWS_SUBNET_ID }}" \
               LogBucket="airbnbprojectdata"
         env:
