@@ -102,7 +102,10 @@ merged_df = merged_df.withColumn("Calendar last Scraped", to_date(col("Calendar 
 
 superhost_criteria = ((col('Host Response Rate') > 90) & (col('Host Acceptance Rate') > 90) & (col('Review Scores Rating') >= 96) & (col('Number of Reviews') >= 10) & (col('Cancellation Policy') != 'strict'))
 
-merged_df = merged_df.withColumn('superhost',when(superhost_criteria, "Yes").otherwise("No")
+merged_df = merged_df.withColumn(
+    'superhost',
+    when(superhost_criteria, "Yes").otherwise("No")
+)
 
 # Repartition the DataFrame to a single partition (for saving to a single file)
 merged_df = merged_df.coalesce(1)
