@@ -37,7 +37,7 @@ Resources:
           Name: CORE
         Ec2SubnetIds:
           - !Ref SubnetId
-        Ec2KeyName: own
+        Ec2KeyName: passkey
       JobFlowRole: EMR_EC2_DefaultRole
       ServiceRole: EMR_DefaultRole
       LogUri: !Sub 's3://airbnbprojectdata/emr-logs/'
