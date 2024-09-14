@@ -100,7 +100,11 @@ merged_df = merged_df.withColumn("Last Scraped", to_date(col("Last Scraped"), "y
 merged_df = merged_df.withColumn("Host Since", to_date(col("Host Since"), "yyyy-MM-dd"))
 merged_df = merged_df.withColumn("Calendar last Scraped", to_date(col("Calendar last Scraped"), "yyyy-MM-dd"))
 
-superhost_criteria = ((col('Host Response Rate') > 90) & (col('Host Acceptance Rate') > 90) & (col('Review Scores Rating') >= 96) & (col('Number of Reviews') >= 10) & (col('Cancellation Policy') != 'strict'))
+superhost_criteria = (
+    (col('Host Acceptance Rate') > 90) & 
+    (col('Review Scores Rating') >= 96) & 
+    (col('Number of Reviews') >= 10)
+)
 
 merged_df = merged_df.withColumn(
     'superhost',
