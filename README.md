@@ -2,13 +2,14 @@
 
 The primary goal is to automate the data processing and set up a pipeline that converts, merges, and stores the dataset in Parquet format in S3 bucket. This data is then queried using Athena and visualized in Power BI. The project not only leverages big data technologies but also focuses on enabling Airbnb stakeholders to make data-driven decisions through effective data visualization. 
 
-<ins>Data Sources</ins>
+<ins>Data Sources</ins>:
 The Airbnb global listing dataset includes extensive information on how Airbnb is really being used in cities around the world. It comprises a CSV file (2 GB) and a GeoJSON file (3 GB) containing geospatial data.
 
-<ins>Technologies Used</ins>
+<ins>Technologies Used</ins>:
 AWS (EC2, Hadoop on EMR, S3, Glue, Athena), PySpark, Power BI (visualizes the processed data, providing insights through interactive dashboards), AWS CloudFormation (automates the provisioning of AWS infrastructure), GitHub Actions (manages the continuous integration and deployment (CI/CD) process).
 
 <ins>Workflow</ins>
+
 1. Raw Data Ingestion & Conversion to DataFrames:  
 The raw data consisting of the CSV and GeoJSON files are stored in a designated Amazon S3 bucket. The raw data is then loaded and converted into Pandas and GeoPandas DataFrames, ensuring structured data ready for further processing.
 
